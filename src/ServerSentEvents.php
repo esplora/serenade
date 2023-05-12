@@ -5,7 +5,7 @@ namespace Serenade\Live;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Redis;
 
-class ServerSentEvents
+abstract class ServerSentEvents
 {
     /**
      * Redis connection
@@ -38,10 +38,7 @@ class ServerSentEvents
      * This method handles the incoming messages for the subscribed channel.
      * It expects a string as input.
      */
-    public function handler(string $message)
-    {
-        //...
-    }
+    abstract public function handler(string $message);
 
     /**
      * Restores connection with last id
@@ -92,13 +89,13 @@ class ServerSentEvents
      *
      * @param mixed|null $data
      *
-     * @return \App\Message
+     * @return \Serenade\Live\Message
      *
      * This method returns a new message containing the given data, or an empty message if the data is null.
      */
     protected function message(mixed $data = null)
     {
-        $message = new \App\Message((string) $data);
+        $message = new Message((string) $data);
 
         return $message;
     }

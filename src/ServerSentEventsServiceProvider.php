@@ -12,8 +12,10 @@ class ServerSentEventsServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        /*
         Broadcast::extend('serenade', function ($broadcasting, $config) {
             return '';
         });
+        */
     }
 }
