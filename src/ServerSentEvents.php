@@ -14,7 +14,7 @@ abstract class ServerSentEvents
      */
     protected function connection()
     {
-        return 'default';
+        return null;
     }
 
     /**
@@ -93,7 +93,7 @@ abstract class ServerSentEvents
      *
      * This method returns a new message containing the given data, or an empty message if the data is null.
      */
-    protected function message(mixed $data = null)
+    public function message(mixed $data = null)
     {
         $message = new Message((string) $data);
 
@@ -129,7 +129,7 @@ abstract class ServerSentEvents
             }
 
             // Listen for new messages
-            $connection->subscribe($this->channel(), fn($message) => $this->handler($message));
+            $connection->subscribe([$this->channel()], fn (string $message) => $this->handler($message));
 
         }, Response::HTTP_OK, $this->headers());
     }

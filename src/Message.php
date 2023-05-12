@@ -157,5 +157,4 @@ class Message
     {
         return implode("\n", array_map(fn($line) => 'data: ' . $line, explode("\n", $this->data))) . "\n\n";
     }
-
 }
