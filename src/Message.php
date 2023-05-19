@@ -1,6 +1,6 @@
 <?php
 
-namespace Serenade\Live;
+namespace Esplora\Serenade;
 
 use Stringable;
 

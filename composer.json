@@ -1,5 +1,5 @@
 {
-  "name": "serenade/live",
+  "name": "esplora/serenade",
   "description": "Server-Sent Events",
   "keywords": [],
   "type": "library",
@@ -25,18 +25,18 @@
   },
   "autoload": {
     "psr-4": {
-      "Serenade\\Live\\": "src/"
+      "Esplora\\Serenade\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Serenade\\Tests\\": "tests/"
+      "Esplora\\Serenade\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Serenade\\Live\\ServerSentEventsServiceProvider"
+        "Esplora\\Serenade\\ServerSentEventsServiceProvider"
       ]
     }
   },

@@ -2,44 +2,10 @@
 
 namespace Esplora\Serenade;
 
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Redis;
+use Illuminate\Broadcasting\Broadcasters\RedisBroadcaster;
 
-abstract class ServerSentEvents
+class SerenadeBroadcaster extends RedisBroadcaster
 {
-    /**
-     * Redis connection
-     *
-     * @return null
-     */
-    protected function connection()
-    {
-        return null;
-    }
-
-    /**
-     * Redis channel
-     *
-     * @return string
-     *
-     * This method returns a string that represents the Redis channel,
-     * which listens to the events.
-     */
-    protected function channel(): string
-    {
-        return 'serenade';
-    }
-
-    /**
-     * Handles the incoming messages
-     *
-     * @param string $message
-     *
-     * This method handles the incoming messages for the subscribed channel.
-     * It expects a string as input.
-     */
-    abstract public function handler(string $message);
-
     /**
      * Restores connection with last id
      *
@@ -49,7 +15,7 @@ abstract class ServerSentEvents
      */
     public function restore(string $id)
     {
-        // ...
+        // TODO: ...
     }
 
     /**
@@ -89,7 +55,7 @@ abstract class ServerSentEvents
      *
      * @param mixed|null $data
      *
-     * @return \Serenade\Live\Message
+     * @return \Esplora\Serenade\Message
      *
      * This method returns a new message containing the given data, or an empty message if the data is null.
      */
@@ -108,17 +74,18 @@ abstract class ServerSentEvents
      * This method returns a Symfony component for a response that streams
      * Server-Sent Events to the client.
      */
-    public function listener()
+    public function listener(string $channel)
     {
         /** @var \Illuminate\Redis\Connections\PhpRedisConnection|\Illuminate\Redis\Connections\PredisConnection $connection */
-        $connection = Redis::connection($this->connection());
+        $connection = $this->redis->connection($this->connection);
 
         register_shutdown_function(function () use ($connection) {
             $connection->disconnect();
+
             abort(200);
         });
 
-        return response()->stream(function () use ($connection) {
+        return response()->stream(function () use ($connection, $channel) {
 
             // Send the message with a retry timer
             $this->message()->retry($this->timeRetry())->send();
@@ -129,7 +96,7 @@ abstract class ServerSentEvents
             }
 
             // Listen for new messages
-            $connection->subscribe([$this->channel()], fn (string $message) => $this->handler($message));
+            $connection->subscribe([$channel], fn (string $message) => $this->message($message));
 
         }, Response::HTTP_OK, $this->headers());
     }
