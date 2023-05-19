@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Broadcasting\Broadcaster;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Illuminate\Support\Facades\Route;
 
 class ServerSentEventsServiceProvider extends ServiceProvider
 {
