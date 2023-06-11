@@ -15,14 +15,15 @@ Serenade is a Laravel package for easily adding [Server-Sent Events](https://dev
 To install Serenade, simply use Composer:
 
 ```bash
-composer require ....
+composer require esplora/serenade
 ```
 
 ## Usage
+
 Using Serenade is simple and intuitive. Here's an example of how to send a simple event:
 
-```
-Serenade::event('example', 'Hello, World!');
+```php
+//...
 ```
 
 This will create a new event with the name example and the message Hello, World!. For more advanced usage, including authorization and queuing, see the official documentation.
