@@ -30,7 +30,7 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "Esplora\\Serenade\\": "tests/"
+      "Esplora\\Serenade\\Tests\\": "tests/"
     }
   },
   "extra": {

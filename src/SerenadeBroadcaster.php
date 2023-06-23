@@ -3,6 +3,7 @@
 namespace Esplora\Serenade;
 
 use Illuminate\Broadcasting\Broadcasters\RedisBroadcaster;
+use Illuminate\Http\Response;
 
 class SerenadeBroadcaster extends RedisBroadcaster
 {

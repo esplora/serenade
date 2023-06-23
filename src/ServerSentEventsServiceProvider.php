@@ -16,21 +16,37 @@ class ServerSentEventsServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Route::get('/serenade/{channel_name}', function (Request $request, Broadcaster $broadcaster) {
-            /** @var \App\SerenadeBroadcaster $broadcaster */
-            $broadcaster = $broadcaster;
+        Route::domain(config('broadcasting.connections.serenade.domain', ''))
+            ->prefix(config('broadcasting.connections.serenade.prefix', ''))
+            ->name(config('broadcasting.connections.serenade.route', 'serenade'))
+            ->middleware(config('broadcasting.connections.serenade.middleware', 'web'))
+            ->get('/.well-known/serenade/{channel_name}', function (Request $request, Broadcaster $broadcaster) {
+                /** @var \Esplora\Serenade\SerenadeBroadcaster $broadcaster */
+                $broadcaster = $broadcaster;
 
-            $access = (bool) $broadcaster->auth($request);
+                $access = (bool) $broadcaster->auth($request);
 
-            abort_unless($access, AccessDeniedHttpException::class);
+                abort_unless($access, AccessDeniedHttpException::class);
 
-            return $broadcaster->listener();
-        });
+                return $broadcaster->listener();
+            });
 
-        /*
-        Broadcast::extend('serenade', function ($broadcasting, $config) {
-            return '';
-        });
-        */
+
+        Broadcast::extend('serenade', fn ($broadcasting, $config) => $this->createDriver($config));
+    }
+
+
+    /**
+     * Create an instance of the driver.
+     *
+     * @param  array  $config
+     * @return \Illuminate\Contracts\Broadcasting\Broadcaster
+     */
+    protected function createDriver(array $config)
+    {
+        return new SerenadeBroadcaster(
+            $this->app->make('redis'), $config['connection'] ?? null,
+            $this->app['config']->get('database.redis.options.prefix', '')
+        );
     }
 }

@@ -113,7 +113,7 @@ class Message
         $message = '';
 
         if ($this->retry) {
-            $message .= sprintf("retry: (%s)\n\n", $this->retry);
+            $message .= sprintf("retry: %s\n\n", $this->retry);
         }
 
         if ($this->data) {
@@ -121,11 +121,11 @@ class Message
         }
 
         if ($this->event) {
-            $message .= sprintf("event: (%s)\n\n", $this->event);
+            $message .= sprintf("event: %s\n\n", $this->event);
         }
 
         if ($this->id) {
-            $message .= sprintf("id: (%s)\n\n", $this->id);
+            $message .= sprintf("id: %s\n\n", $this->id);
         }
 
         return $message;

@@ -26,6 +26,49 @@ Using Serenade is simple and intuitive. Here's an example of how to send a simpl
 //...
 ```
 
+## Configure
+
+All of your application's event broadcasting configuration is stored in the `config/broadcasting.php` configuration file.
+Add the following lines accordingly:
+
+```php
+/*
+|--------------------------------------------------------------------------
+| Broadcast Connections
+|--------------------------------------------------------------------------
+|
+| Here you may define all of the broadcast connections that will be used
+| to broadcast events to other systems or over websockets. Samples of
+| each available type of connection are provided inside this array.
+|
+*/
+
+'connections' => [
+    'serenade' => [
+        'domain'     => '',
+        'prefix'     => '',
+        'route'      => 'serenade',
+        'middleware' => 'web',
+    ],
+],
+```
+
+
+
+## Subscribing
+
+Subscribing to updates from a web browser or any other platform supporting Server-Sent Events is straightforward:
+
+```javascript
+const url = new URL('https://localhost/.well-known/serenade/your.channel');
+
+const eventSource = new EventSource(url);
+
+// The callback will be called every time an update is published
+eventSource.onmessage = e => console.log(e); // do something with the payload
+```
+
+
 This will create a new event with the name example and the message Hello, World!. For more advanced usage, including authorization and queuing, see the official documentation.
 
 ## License
