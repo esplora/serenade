@@ -2,8 +2,6 @@
 
 namespace Esplora\Serenade;
 
-use Stringable;
-
 /**
  * The Message class formats a message according to the Server-Sent Events (SSE) specification.
  */
@@ -12,28 +10,28 @@ class Message
     /**
      * The body of the message. Several data values in a row are interpreted as one message separated by line breaks \n.
      *
-     * @var string $data
+     * @var string
      */
     protected $data;
 
     /**
      * The id property of the message. Used to update the Last-Event-ID sent in the header on reconnects.
      *
-     * @var string $id
+     * @var string
      */
     protected $id;
 
     /**
      * The recommended delay before reconnecting in milliseconds. Cannot be set using JavaScript.
      *
-     * @var int $retry
+     * @var int
      */
     protected $retry;
 
     /**
      * The user-defined event name. Should be set before the data field.
      *
-     * @var string $event
+     * @var string
      */
     protected $event;
 
@@ -155,6 +153,6 @@ class Message
      */
     protected function multipleDate(): string
     {
-        return implode("\n", array_map(fn($line) => 'data: ' . $line, explode("\n", $this->data))) . "\n\n";
+        return implode("\n", array_map(fn ($line) => 'data: '.$line, explode("\n", $this->data)))."\n\n";
     }
 }

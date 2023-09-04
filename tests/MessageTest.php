@@ -31,7 +31,7 @@ class MessageTest extends TestCase
         $this->assertStringContainsString("event: custom-event\n\n", (string) $message);
     }
 
-    public function testToStringWithId():void
+    public function testToStringWithId(): void
     {
         $message = (new Message('Hello, world!'))->id('12345');
 
@@ -54,7 +54,7 @@ class MessageTest extends TestCase
             ->id('12345')
             ->retry(5000);
 
-        $expected = "retry: 5000\n\ndata: Hello, world!\n\n" .
+        $expected = "retry: 5000\n\ndata: Hello, world!\n\n".
             "event: custom-event\n\nid: 12345\n\n";
 
         $this->assertSame($expected, (string) $message);

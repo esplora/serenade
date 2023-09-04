@@ -7,7 +7,7 @@ use Illuminate\Http\Response;
 
 class SerenadeBroadcaster extends RedisBroadcaster
 {
-     use UseSerenadeChannel;
+    use UseSerenadeChannel;
 
     /**
      * The listener for Server-Sent Events

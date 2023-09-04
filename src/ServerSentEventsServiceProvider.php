@@ -2,12 +2,12 @@
 
 namespace Esplora\Serenade;
 
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Broadcast;
-use Illuminate\Http\Request;
 use Illuminate\Contracts\Broadcasting\Broadcaster;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\ServiceProvider;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class ServerSentEventsServiceProvider extends ServiceProvider
 {
@@ -31,15 +31,14 @@ class ServerSentEventsServiceProvider extends ServiceProvider
                 return $broadcaster->listener();
             });
 
-
         Broadcast::extend('serenade', fn ($broadcasting, $config) => $this->createDriver($config));
     }
-
 
     /**
      * Create an instance of the driver.
      *
-     * @param  array  $config
+     * @param array $config
+     *
      * @return \Illuminate\Contracts\Broadcasting\Broadcaster
      */
     protected function createDriver(array $config)
