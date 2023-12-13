@@ -45,6 +45,7 @@ Add the following lines accordingly:
 
 'connections' => [
     'serenade' => [
+        'driver'     => 'serenade',
         'domain'     => '',
         'prefix'     => '',
         'route'      => 'serenade',
@@ -52,8 +53,6 @@ Add the following lines accordingly:
     ],
 ],
 ```
-
-
 
 ## Subscribing
 
@@ -70,6 +69,48 @@ eventSource.onmessage = e => console.log(e); // do something with the payload
 
 
 This will create a new event with the name example and the message Hello, World!. For more advanced usage, including authorization and queuing, see the official documentation.
+
+
+## Starting the SSE server
+
+Once you have configured your Serenade apps, you can start the Laravel Serenade server by issuing the artisan command:
+
+```bash
+php artisan serenade:serve
+```
+
+### Using a different port
+
+The default port of the Laravel Serenade server is `6001`. You may pass a different port to the command using the `--port` option.
+
+```bash
+php artisan serenade:serve --port=3030
+```
+
+This will start listening on port `3030`.
+
+### Restricting the listening host
+
+By default, the Laravel Serenade server will listen on `0.0.0.0` and will allow incoming connections from all networks. If you want to restrict this, you can start the server with a `--host` option, followed by an IP.
+
+For example, by using `127.0.0.1`, you will only allow WebSocket connections from localhost.
+
+```bash
+php artisan serenade:serve --host=127.0.0.1
+```
+
+## SSL Support
+
+Since most of the web's traffic is going through HTTPS, it's also crucial to secure your SSE server. Luckily, adding SSL support to this package is really simple.
+
+### Using a reverse proxy
+
+The easiest way to add SSL support is to use a reverse proxy like Nginx or Apache. This is the recommended way to add SSL support to your SSE server.
+
+```bash
+TODO:
+```
+
 
 ## License
 

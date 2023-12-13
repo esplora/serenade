@@ -2,45 +2,98 @@
 
 namespace Esplora\Serenade;
 
-use Illuminate\Broadcasting\Broadcasters\RedisBroadcaster;
-use Illuminate\Http\Response;
+use Illuminate\Broadcasting\Broadcasters\Broadcaster;
+use Illuminate\Broadcasting\Broadcasters\UsePusherChannelConventions;
+use Illuminate\Broadcasting\BroadcastException;
+use Illuminate\Support\Facades\Http;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
-class SerenadeBroadcaster extends RedisBroadcaster
+class SerenadeBroadcaster extends Broadcaster
 {
-    use UseSerenadeChannel;
+    use UsePusherChannelConventions;
 
     /**
-     * The listener for Server-Sent Events
+     * Authenticate the incoming request for a given channel.
      *
-     * @return \Symfony\Component\HttpFoundation\StreamedResponse
+     * @param \Illuminate\Http\Request $request
      *
-     * This method returns a Symfony component for a response that streams
-     * Server-Sent Events to the client.
+     * @return mixed
+     *
+     * @throws \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException
      */
-    public function listener(string $channel)
+    public function auth($request)
     {
-        /** @var \Illuminate\Redis\Connections\PhpRedisConnection|\Illuminate\Redis\Connections\PredisConnection $connection */
-        $connection = $this->redis->connection($this->connection);
+        $channelName = $this->normalizeChannelName($request->channel_name);
 
-        register_shutdown_function(function () use ($connection) {
-            $connection->disconnect();
+        if (empty($request->channel_name) ||
+            ($this->isGuardedChannel($request->channel_name) &&
+                !$this->retrieveUser($request, $channelName))) {
+            throw new AccessDeniedHttpException;
+        }
 
-            abort(200);
-        });
+        return parent::verifyUserCanAccessChannel(
+            $request, $channelName
+        );
+    }
 
-        return response()->stream(function () use ($connection, $channel) {
+    /**
+     * Return the valid authentication response.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param mixed                    $result
+     *
+     * @return mixed
+     */
+    public function validAuthenticationResponse($request, $result)
+    {
+        if (is_bool($result)) {
+            return json_encode($result);
+        }
 
-            // Send the message with a retry timer
-            $this->message()->retry($this->timeRetry())->send();
+        $channelName = $this->normalizeChannelName($request->channel_name);
 
-            // If the Last-Event-Id header is set, restore the connection with the last message id.
-            if (request()->hasHeader('Last-Event-Id')) {
-                $this->restore(request()->header('Last-Event-Id'));
+        $user = $this->retrieveUser($request, $channelName);
+
+        $broadcastIdentifier = method_exists($user, 'getAuthIdentifierForBroadcasting')
+            ? $user->getAuthIdentifierForBroadcasting()
+            : $user->getAuthIdentifier();
+
+
+        return json_encode(['channel_data' => [
+            'user_id'   => $broadcastIdentifier,
+            'user_info' => $result,
+        ]]);
+    }
+
+    /**
+     * Broadcast the given event.
+     *
+     * @param array  $channels
+     * @param string $event
+     * @param array  $payload
+     *
+     * @return void
+     *
+     * @throws \Illuminate\Broadcasting\BroadcastException
+     */
+    public function broadcast(array $channels, $event, array $payload = [])
+    {
+        if (empty($channels)) {
+            return;
+        }
+
+        try {
+            foreach ($channels as $channel) {
+                Http::post("http://127.0.0.1:8080/.well-known/serenade/{$channel->name}", [
+                    'channel' => $channel->name,
+                    'event'   => $event,
+                    'data'    => $payload,
+                ]);
             }
-
-            // Listen for new messages
-            $connection->subscribe([$channel], fn (string $message) => $this->message($message));
-
-        }, Response::HTTP_OK, $this->headers());
+        } catch (\Throwable $e) {
+            throw new BroadcastException(
+                sprintf('Serenade error: %s.', $e->getMessage())
+            );
+        }
     }
 }

@@ -5,18 +5,6 @@ namespace Esplora\Serenade;
 trait UseSerenadeChannel
 {
     /**
-     * Restores connection with last id
-     *
-     * @param string $id
-     *
-     * This method restores the connection with the last message id for the given Redis channel.
-     */
-    public function restore(string $id)
-    {
-        // TODO: ...
-    }
-
-    /**
      * The delay before reconnecting in milliseconds
      *
      * @return int

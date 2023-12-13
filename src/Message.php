@@ -153,6 +153,6 @@ class Message
      */
     protected function multipleDate(): string
     {
-        return implode("\n", array_map(fn ($line) => 'data: '.$line, explode("\n", $this->data)))."\n\n";
+        return implode("\n", array_map(fn($line) => 'data: ' . $line, explode("\n", $this->data))) . "\n\n";
     }
 }
