@@ -9,11 +9,11 @@ use Esplora\Serenade\UseSerenadeChannel;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Psr\Http\Message\ServerRequestInterface;
+use React\EventLoop\Loop;
 use React\EventLoop\LoopInterface;
 use React\Http\HttpServer;
 use React\Http\Message\Response;
 use React\Socket\SocketServer;
-use React\EventLoop\Loop;
 use React\Stream\ThroughStream;
 use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
 
@@ -72,18 +72,18 @@ class Server
 
         $http->listen($socket);
 
-/*
-        $this->loop->addPeriodicTimer(2.0, function () {
+        /*
+                $this->loop->addPeriodicTimer(2.0, function () {
 
-            $message = $this->message('ticking')
-                ->event('tick')
-                ->id(Str::orderedUuid()->toString());
+                    $message = $this->message('ticking')
+                        ->event('tick')
+                        ->id(Str::orderedUuid()->toString());
 
-            $this->channelManager->all()->each(fn(BufferedChannel $channel) => $channel->writeMessage($message));
-        });
-*/
+                    $this->channelManager->all()->each(fn(BufferedChannel $channel) => $channel->writeMessage($message));
+                });
+        */
 
-        echo "Server running at {$this->uri}" . PHP_EOL;
+        echo "Server running at {$this->uri}".PHP_EOL;
     }
 
     /**
@@ -116,7 +116,6 @@ class Server
         ]);
     }
 
-
     /**
      * Handle Subscription request.
      *
@@ -128,12 +127,13 @@ class Server
      * @param \Psr\Http\Message\ServerRequestInterface  $request
      * @param \Esplora\Serenade\Channel\BufferedChannel $channel
      *
-     * @return \React\Http\Message\Response
      * @throws \Exception
+     *
+     * @return \React\Http\Message\Response
      */
     public function handleSubscriptionRequest(ServerRequestInterface $request, BufferedChannel $channel)
     {
-        if (!$this->isLaravelAuthorized($request)) {
+        if (! $this->isLaravelAuthorized($request)) {
             return new Response(Response::STATUS_UNAUTHORIZED, [
                 'Access-Control-Allow-Origin' => '*',
                 'Content-Type'                => 'text/html',
@@ -144,9 +144,9 @@ class Server
 
         $id = $request->getHeaderLine('Last-Event-ID');
 
-        $this->loop->futureTick(fn() => $channel->connect($stream, $id));
+        $this->loop->futureTick(fn () => $channel->connect($stream, $id));
 
-        $stream->on('close', fn() => $channel->disconnect($stream));
+        $stream->on('close', fn () => $channel->disconnect($stream));
 
         /*
         $stream->on('error', function (Exception $exception) {
@@ -157,14 +157,14 @@ class Server
         return new Response(Response::STATUS_OK, $this->headers(), $stream);
     }
 
-
     /**
      * Check if request is authorized in Laravel.
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request
      *
-     * @return bool
      * @throws \Exception
+     *
+     * @return bool
      */
     public function isLaravelAuthorized(ServerRequestInterface $request): bool
     {

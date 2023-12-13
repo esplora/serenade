@@ -31,6 +31,6 @@ class SerenadeServer extends Command
     {
         $server = new Server();
 
-        $server->start();;
+        $server->start();
     }
 }

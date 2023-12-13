@@ -8,9 +8,6 @@ class ChannelManager
 {
     protected Collection $channel;
 
-    /**
-     *
-     */
     public function __construct()
     {
         $this->channels = Collection::make();
@@ -23,7 +20,7 @@ class ChannelManager
      */
     public function channel(string $channelName): BufferedChannel
     {
-        if (!$this->channels->has($channelName)) {
+        if (! $this->channels->has($channelName)) {
             $this->channels->put($channelName, new BufferedChannel());
         }
 

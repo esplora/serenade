@@ -17,9 +17,9 @@ class SerenadeBroadcaster extends Broadcaster
      *
      * @param \Illuminate\Http\Request $request
      *
-     * @return mixed
-     *
      * @throws \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException
+     *
+     * @return mixed
      */
     public function auth($request)
     {
@@ -27,7 +27,7 @@ class SerenadeBroadcaster extends Broadcaster
 
         if (empty($request->channel_name) ||
             ($this->isGuardedChannel($request->channel_name) &&
-                !$this->retrieveUser($request, $channelName))) {
+                ! $this->retrieveUser($request, $channelName))) {
             throw new AccessDeniedHttpException;
         }
 
@@ -58,7 +58,6 @@ class SerenadeBroadcaster extends Broadcaster
             ? $user->getAuthIdentifierForBroadcasting()
             : $user->getAuthIdentifier();
 
-
         return json_encode(['channel_data' => [
             'user_id'   => $broadcastIdentifier,
             'user_info' => $result,
@@ -72,9 +71,9 @@ class SerenadeBroadcaster extends Broadcaster
      * @param string $event
      * @param array  $payload
      *
-     * @return void
-     *
      * @throws \Illuminate\Broadcasting\BroadcastException
+     *
+     * @return void
      */
     public function broadcast(array $channels, $event, array $payload = [])
     {

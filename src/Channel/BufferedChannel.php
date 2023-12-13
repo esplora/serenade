@@ -2,7 +2,6 @@
 
 namespace Esplora\Serenade\Channel;
 
-use Esplora\Serenade\Encoder;
 use Esplora\Serenade\Message;
 use Illuminate\Support\Collection;
 use React\Stream\WritableStreamInterface;
@@ -39,9 +38,9 @@ class BufferedChannel
         $this->streams->push($stream);
 
         // TODO: The delay before reconnecting in milliseconds
-        //$message = new Message();
-        //$message->retry(300);
-        //$stream->write();
+        // $message = new Message();
+        // $message->retry(300);
+        // $stream->write();
 
         // TODO: Restores connection with last id
     }
@@ -55,7 +54,7 @@ class BufferedChannel
      */
     public function disconnect(WritableStreamInterface $stream): void
     {
-        $this->streams = $this->streams->filter(fn($connect) => $stream !== $connect);
+        $this->streams = $this->streams->filter(fn ($connect) => $stream !== $connect);
     }
 
     /**

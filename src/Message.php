@@ -134,7 +134,7 @@ class Message
      *
      * @param string|null $event The user-defined event name of the message.
      */
-    public function send(string $event = null): void
+    public function send(?string $event = null): void
     {
         if ($event !== null) {
             $this->event = $event;
@@ -153,6 +153,6 @@ class Message
      */
     protected function multipleDate(): string
     {
-        return implode("\n", array_map(fn($line) => 'data: ' . $line, explode("\n", $this->data))) . "\n\n";
+        return implode("\n", array_map(fn ($line) => 'data: '.$line, explode("\n", $this->data)))."\n\n";
     }
 }
